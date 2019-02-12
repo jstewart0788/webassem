@@ -1,0 +1,13 @@
+{
+  "name": "getting-started-with-web-assembly",
+  "version": "1.0.0",
+  "main": "server.js",
+  "author": "Jonathan Stewart",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
