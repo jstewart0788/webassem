@@ -7,11 +7,34 @@
     <body>
         <h1>WebAssembly Demo</h1>
         <script>
+            //Initialize wasm with custom memory (array buffer)
+            // 2 pages: 2 * 64kb (128kb)
+            const wasmMemory = new WebAssembly.Memory({initial: 2})
+
+            //Read a string out of WebAssembly memory
+            const readMemStr= (offset, length) => {
+                const strBuffer = new Uint8Array(wasmMemory.buffer, offset, length);
+                const str = new TextDecoder().decode(strBuffer);
+                window.dispatchEvent(new CustomEvent('wasmValue', { detail: str }));
+            }
+
+            window.addEventListener('wasmValue', str =>{
+                console.log(' Recieved a new string from C: ', str.detail);
+            })
+
+            const imports = {
+                env:{
+                    numLog: console.log,
+                    strLog: readMemStr,
+                    memory: wasmMemory
+                }
+            }
+
             //Load WASM
-            WebAssembly.instantiateStreaming(fetch('/program.wasm'))
+            WebAssembly.instantiateStreaming(fetch('/program.wasm'), imports)
             .then(wasm=>{
                 console.log('WASM READY')
-
+                //Make wasm object accessible
                 window.wasm  = wasm;
             });
         </script>
